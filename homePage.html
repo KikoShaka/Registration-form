@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        body {
+            background-image: url('https://mail.google.com/mail/u/0?ui=2&ik=efbf9cffd0&attid=0.1&permmsgid=msg-a:r2968658295745329091&th=18c8a3ebbe1ffb37&view=att&disp=safe&realattid=18c8a3e98311d2883971');
+            background-size: cover; /* За да покрие цялата страница */
+            background-repeat: no-repeat; /* За да не се повтаря изображението */
+            background-attachment: fixed; /* Фиксиран фон при скролиране */
+        }
+        .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2em; /* Увеличаване на шрифта */
+            padding: 15px 30px; /* Увеличаване на вътрешното отстояване */
+        }
+        .youtube-video {
+            margin-top: 20px; /* добавяне на малко място над видеото */
+            width: 560px; /* широчина на видеото */
+            height: 315px; /* височина на видеото */
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Home Page!</h1>
+    <iframe class="youtube-video"
+        src="https://www.youtube.com/embed/EpeFz_S3h24"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+    </iframe>
+    <button class="logout-button" onclick="logout()">Logout</button>
+    <script src="logout.js"></script>
+</body>
+</html>
