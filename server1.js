@@ -3,6 +3,8 @@ const url = require('url');
 const mysql = require('mysql');
 const nodemailer = require('nodemailer');
 
+const bcrypt = require('bcrypt');
+
 // Настройте nodemailer транспорт
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -132,34 +134,45 @@ const server = http.createServer((req, res) => {
         req.on('end', () => {
             try {
                 const { email, name, password } = JSON.parse(body);
-                const checkUserQuery = 'SELECT * FROM user WHERE email = ? OR name = ?';
-                
-                connection.query(checkUserQuery, [email, name], (error, results) => {
-                    if (error) {
+    
+                // Хеширане на паролата преди запазването ѝ в базата данни
+                bcrypt.hash(password, 10, function(err, hashedPassword) {
+                    if (err) {
                         res.writeHead(500);
-                        res.end('Server error');
+                        res.end('Error hashing password');
                         return;
                     }
-
-                    if (results.length > 0) {
-                        res.writeHead(409);
-                        res.end('User already exists.');
-                        return;
-                    }
-
-                    const insertQuery = 'INSERT INTO user (email, name, password) VALUES (?, ?, ?)';
-                    connection.query(insertQuery, [email, name, password], (error, results) => {
+    
+                    const checkUserQuery = 'SELECT * FROM user WHERE email = ? OR name = ?';
+                    
+                    connection.query(checkUserQuery, [email, name], (error, results) => {
                         if (error) {
                             res.writeHead(500);
                             res.end('Server error');
                             return;
                         }
-                        
-                        sendVerificationEmail(email);
-                        res.writeHead(200);
-                        res.end('User registered successfully');
+    
+                        if (results.length > 0) {
+                            res.writeHead(409);
+                            res.end('User already exists.');
+                            return;
+                        }
+    
+                        const insertQuery = 'INSERT INTO user (email, name, password) VALUES (?, ?, ?)';
+                        connection.query(insertQuery, [email, name, hashedPassword], (error) => {
+                            if (error) {
+                                res.writeHead(500);
+                                res.end('Server error');
+                                return;
+                            }
+                            
+                            sendVerificationEmail(email);
+                            res.writeHead(200);
+                            res.end('User registered successfully');
+                        });
                     });
                 });
+    
             } catch (error) {
                 res.writeHead(400);
                 res.end('Bad Request: Invalid JSON');
