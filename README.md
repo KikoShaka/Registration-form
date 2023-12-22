@@ -34,3 +34,4 @@
 - **server1.js:** Сървърен код, управляващ заявките, базата данни и имейлите, включително хеширане на паролите с `bcrypt`.
 ![1](https://github.com/KikoShaka/Registration-form/assets/119086326/f227409a-6199-474e-aefe-fc9308c8ede5)
 ![2](https://github.com/KikoShaka/Registration-form/assets/119086326/7b21cb97-d295-4ce3-a3ce-c1e5aabe041c)
+![Screenshot 2023-12-22 124429](https://github.com/KikoShaka/Registration-form/assets/119086326/051d1338-4442-4b09-86ff-170556059f72)
