@@ -4,19 +4,19 @@ document.addEventListener('DOMContentLoaded', function () {
     registrationForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // Проверка за формат на електронната поща и дължина на паролата
+        // Check the format of the email and the length of the password
         const email = document.getElementById('email').value;
         const name = document.getElementById('name').value;
         const password = document.getElementById('password').value;
         let isValid = true;
 
-        // Валидация на електронната поща
+        // Validate the email
         if (!validateEmail(email)) {
             alert('Please enter a valid email address.');
             isValid = false;
         }
 
-        // Валидация на паролата
+        // Validate the password
         if (password.length < 6) {
             alert('Password should be at least 6 characters long.');
             isValid = false;
@@ -26,9 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Password should contain at least one uppercase letter and one special character.');
             isValid = false;
         }
-        // Изпращане на формуляра, ако валидацията е успешна
+        // Submit the form if validation is successful
         if (isValid) {
-            //registrationForm.submit();
             fetch('http://localhost:3000/register', {
                 method: 'POST',
                 headers: {
