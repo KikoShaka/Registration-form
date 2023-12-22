@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User CRUD Interface</title>
+    <link rel="stylesheet" href="styless-crud.css">
+</head>
+<body>
+    <div class="crud-container">
+        <h2>User CRUD Operations</h2>
+
+        <!-- Форма за създаване/редактиране на потребители -->
+        <form id="userForm">
+            <input type="hidden" id="userId">
+            <input type="text" id="userName" placeholder="Enter name" required>
+            <input type="email" id="userEmail" placeholder="Enter email" required>
+            <button type="submit">Save User</button>
+        </form>
+
+        <!-- Таблица за показване на потребители -->
+        <table id="usersTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script src="user-crud.js"></script>
+</body>
+</html>
