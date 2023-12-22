@@ -66,58 +66,39 @@ const server = http.createServer((req, res) => {
 
     //CHAT GPTT CRUD2
 
-    if (trimmedPath === 'users' && method === 'GET') {
-        connection.query('SELECT * FROM user', (error, results) => {
-            if (error) {
-                res.writeHead(500);
-                res.end('Server error');
-                return;
-            }
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(results));
-        });
-    }
-
-    // Update - Обновяване на потребителски данни
-    else if (trimmedPath === 'users' && method === 'PUT') {
-        // Вашият код за обновяване на потребител тук
+    if (trimmedPath === 'user' && method === 'POST') {
         let body = '';
-
-    req.on('data', (chunk) => {
-        body += chunk.toString();
-    });
-
-    req.on('end', () => {
-        const { id, email, name, password } = JSON.parse(body);
-        const updateQuery = 'UPDATE user SET email = ?, name = ?, password = ? WHERE id = ?';
-
-        connection.query(updateQuery, [email, name, password, id], (error) => {
-            if (error) {
-                res.writeHead(500);
-                res.end('Server error');
-                return;
-            }
-            res.writeHead(200);
-            res.end('User updated successfully');
+        req.on('data', (chunk) => {
+            body += chunk.toString();
         });
-    });
+        req.on('end', () => {
+            const { name, email } = JSON.parse(body);
+            // Добавете логика за създаване на потребител
+        });
     }
-
-    // Delete - Изтриване на потребител
-    else if (trimmedPath.startsWith('users/') && method === 'DELETE') {
-        // Вашият код за изтриване на потребител тук
-        const id = trimmedPath.split('/')[1];
-        const deleteQuery = 'DELETE FROM user WHERE id = ?';
     
-        connection.query(deleteQuery, [id], (error) => {
-            if (error) {
-                res.writeHead(500);
-                res.end('Server error');
-                return;
-            }
-            res.writeHead(200);
-            res.end('User deleted successfully');
+    // Четене на потребители
+    else if (trimmedPath === 'user' && method === 'GET') {
+        // Добавете логика за извличане на всички потребители
+    }
+    
+    // Обновяване на потребител
+    else if (trimmedPath.startsWith('user/') && method === 'PUT') {
+        const id = trimmedPath.split('/')[1];
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk.toString();
         });
+        req.on('end', () => {
+            const { name, email } = JSON.parse(body);
+            // Добавете логика за обновяване на потребител
+        });
+    }
+    
+    // Изтриване на потребител
+    else if (trimmedPath.startsWith('user/') && method === 'DELETE') {
+        const id = trimmedPath.split('/')[1];
+        // Добавете логика за изтриване на потребител
     }
 
     //!!!!!!!!!!!!!!!!!!!!!!!
@@ -190,24 +171,53 @@ const server = http.createServer((req, res) => {
         req.on('end', () => {
             try {
                 const { email, password } = JSON.parse(body);
-                const loginQuery = 'SELECT * FROM user WHERE email = ? AND password = ?';
-
-                connection.query(loginQuery, [email, password], (error, results) => {
+                console.log('Login attempt:', email);
+    
+                const loginQuery = 'SELECT * FROM user WHERE email = ?';
+    
+                connection.query(loginQuery, [email], (error, results) => {
                     if (error) {
+                        console.error('Database query error:', error);
                         res.writeHead(500);
                         res.end('Server error');
                         return;
                     }
-
+    
                     if (results.length > 0) {
-                        res.writeHead(200);
-                        res.end('Login successful');
+                        const user = results[0];
+                        console.log('User found:', user);
+                        console.log('Hashed password from DB:', user.Password);
+
+                         // Проверка дали има хеширана парола за този потребител
+                         if (!user.Password) {
+                              res.writeHead(500);
+                              res.end('Server error: No password set for user');
+                              return;
+                         }
+    
+                        bcrypt.compare(password, user.Password, function(err, isMatch) {
+                            if (err) {
+                                console.error('bcrypt error:', err);
+                                res.writeHead(500);
+                                res.end('Error during password comparison');
+                                return;
+                            }
+    
+                            if (isMatch) {
+                                res.writeHead(200);
+                                res.end('Login successful');
+                            } else {
+                                res.writeHead(401);
+                                res.end('Login failed: Incorrect password');
+                            }
+                        });
                     } else {
                         res.writeHead(401);
-                        res.end('Login failed');
+                        res.end('Login failed: User not found');
                     }
                 });
             } catch (error) {
+                console.error('Request parsing error:', error);
                 res.writeHead(400);
                 res.end('Bad Request: Invalid JSON');
             }
