@@ -1,4 +1,3 @@
-// login.js
 document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.getElementById('loginForm');
 
@@ -8,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
-        // Предполага се, че сървърът слуша на порт 3000
         fetch('http://localhost:3000/login', {
             method: 'POST',
             headers: {
@@ -27,15 +25,11 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
             alert('Login successful');
-            //sessionStprage
             sessionStorage.setItem('user', email);
-            //console.log(sessionStorage.getItem('user'));
             window.location.href = 'homePage.html';
-            // Тук може да редиректнете потребителя или да обновите UI
         })
         .catch(error => {
             alert(error.message);
-            // Обработка на грешки, например неправилно име или парола
         });
     });
 });
