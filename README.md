@@ -32,3 +32,4 @@
 - **styles.css:** Стилове за уеб страниците.
 - **index.js, login.js, logout.js:** JavaScript файлове за клиентската логика.
 - **server1.js:** Сървърен код, управляващ заявките, базата данни и имейлите, включително хеширане на паролите с `bcrypt`.
+![1](https://github.com/KikoShaka/Registration-form/assets/119086326/f227409a-6199-474e-aefe-fc9308c8ede5)
