@@ -12,9 +12,6 @@ nodemailer.createTransport.mockReturnValue({
     sendMail: mockSendMail
   });
 
-mysql.createConnection.mockReturnValue({ connect: mockConnect, query: mockQuery });
-
-
 const myServer = require('./server1');
 
 describe('sendVerificationEmail', () => {
