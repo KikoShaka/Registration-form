@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const userForm = document.getElementById('userForm');
     const usersTableBody = document.getElementById('usersTable').querySelector('tbody');
 
-    // Зареждане на потребителите при стартиране
+    // load users
     fetchUsers();
 
     userForm.addEventListener('submit', function (e) {
@@ -17,16 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         if (userId) {
-            // Обновяване на потребител
             updateUserData(userId, userData);
         } else {
-            // Създаване на нов потребител
             createNewUser(userData);
         }
     });
 
     function fetchUsers() {
-        // TODO: Извикване на сървъра за получаване на потребителите
         fetch('http://localhost:3000/users')
             .then(response => response.json())
             .then(data => {
@@ -36,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function createNewUser(userData) {
-        // TODO: Изпращане на данни до сървъра за създаване на нов потребител
+        // send data to server to create mew user
         fetch('http://localhost:3000/users', {
             method: 'POST',
             headers: {
@@ -53,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateUserData(userId, userData) {
-        // TODO: Изпращане на данни до сървъра за обновяване на потребител
+        //send data to server to update
         fetch(`http://localhost:3000/users/${userId}`, {
             method: 'PUT',
             headers: {
@@ -63,27 +60,22 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(response => response.text())
         .then(() => {
-            // Обновяване на потребителя в таблицата или презареждане на потребителите
             fetchUsers();
         })
         .catch(error => console.error('Error:', error));
     }
 
     function deleteUser(userId) {
-        // TODO: Изпращане на заявка за изтриване на потребител
         fetch(`http://localhost:3000/users/${userId}`, {
             method: 'DELETE',
         })
         .then(response => response.text())
         .then(() => {
-            // Премахване на потребителя от таблицата или презареждане на потребителите
             fetchUsers();
         })
         .catch(error => console.error('Error:', error));
         
     }
-
-    // Функции за визуализация на потребителите в таблицата
     function addUserRow(userData) {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -98,7 +90,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     window.editUser = function(userId) {
-        // TODO: Зареждане на данните на потребител във формата за редактиране
         fetch(`http://localhost:3000/users/${userId}`)
             .then(response => response.json())
             .then(userData => {
