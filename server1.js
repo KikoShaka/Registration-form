@@ -46,7 +46,7 @@ connection.connect(function(err) {
     console.log('MySQL connected as id ' + connection.threadId);
 });
 
-// Create an HTTP server
+// create a http srvr
 const server = http.createServer((req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
