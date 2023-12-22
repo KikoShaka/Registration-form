@@ -5,19 +5,17 @@ const nodemailer = require('nodemailer');
 
 const bcrypt = require('bcrypt');
 
-// Настройте nodemailer транспорт
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: 'type of email(gmail, yahoo, abv...)', 
     auth: {
-        user: 'kirilpit777@gmail.com',
-        pass: 'csro mhkw muga ltnd' // Използвайте реалната парола или App парола тук
+        user: 'your_email',
+        pass: 'your_pass'
     }
 });
 
-// Функция за изпращане на имейл за верификация
 function sendVerificationEmail(email) {
     const mailOptions = {
-        from: 'kirilpit777@gmail.com',
+        from: 'your_email',
         to: email,
         subject: 'Account Verification',
         text: 'Thank you for registering! Please verify your account.'
@@ -32,12 +30,12 @@ function sendVerificationEmail(email) {
     });
 }
 
-// Свързване с MySQL базата данни
+// connect to my database (MySql) / common host and user
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'freerunbg69',
-    database: 'users'
+    password: 'your_pass',
+    database: 'name'
 });
 
 connection.connect(function(err) {
@@ -48,7 +46,7 @@ connection.connect(function(err) {
     console.log('MySQL connected as id ' + connection.threadId);
 });
 
-// Създаване на HTTP сървъра
+// Create an HTTP server
 const server = http.createServer((req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -64,7 +62,7 @@ const server = http.createServer((req, res) => {
     const trimmedPath = parsedUrl.pathname.replace(/^\/+|\/+$/g, '');
     const method = req.method.toUpperCase();
 
-    //CHAT GPTT CRUD2
+    //CRUD
 
     if (trimmedPath === 'user' && method === 'POST') {
         let body = '';
@@ -73,38 +71,67 @@ const server = http.createServer((req, res) => {
         });
         req.on('end', () => {
             const { name, email } = JSON.parse(body);
-            // Добавете логика за създаване на потребител
         });
     }
     
-    // Четене на потребители
+      // Reading users
     else if (trimmedPath === 'user' && method === 'GET') {
-        // Добавете логика за извличане на всички потребители
+        connection.query('SELECT * FROM user', (error, results) => {
+            if (error) {
+                console.error('Database query error:', error);
+                res.writeHead(500);
+                res.end('Server error');
+                return;
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(results));
+        });
     }
     
-    // Обновяване на потребител
+    // update user
     else if (trimmedPath.startsWith('user/') && method === 'PUT') {
         const id = trimmedPath.split('/')[1];
         let body = '';
         req.on('data', (chunk) => {
-            body += chunk.toString();
+          body += chunk.toString();
         });
         req.on('end', () => {
             const { name, email } = JSON.parse(body);
-            // Добавете логика за обновяване на потребител
+
+            const updateQuery = 'UPDATE user SET name = ?, email = ? WHERE id = ?';
+            connection.query(updateQuery, [name, email, id], (error) => {
+               if (error) {
+                  console.error('Database query error:', error);
+                  res.writeHead(500);
+                  res.end('Server error');
+                  return;
+                }
+                res.writeHead(200);
+                res.end('User updated successfully');
+            });
         });
     }
     
-    // Изтриване на потребител
+    /// delete user
     else if (trimmedPath.startsWith('user/') && method === 'DELETE') {
         const id = trimmedPath.split('/')[1];
-        // Добавете логика за изтриване на потребител
-    }
 
+        const deleteQuery = 'DELETE FROM user WHERE id = ?';
+        connection.query(deleteQuery, [id], (error) => {
+            if (error) {
+                console.error('Database query error:', error);
+                res.writeHead(500);
+                res.end('Server error');
+                return;
+            }
+            res.writeHead(200);
+            res.end('User deleted successfully');
+        });
+    }
     //!!!!!!!!!!!!!!!!!!!!!!!
 
 
-    // Обработка на регистрация
+    // registration
     if (trimmedPath === 'register' && method === 'POST') {
         let body = '';
 
@@ -116,7 +143,7 @@ const server = http.createServer((req, res) => {
             try {
                 const { email, name, password } = JSON.parse(body);
     
-                // Хеширане на паролата преди запазването ѝ в базата данни
+                // hash pass before save in DB
                 bcrypt.hash(password, 10, function(err, hashedPassword) {
                     if (err) {
                         res.writeHead(500);
@@ -160,7 +187,7 @@ const server = http.createServer((req, res) => {
             }
         });
     } 
-    // Обработка на вход
+    // login
     else if (trimmedPath === 'login' && method === 'POST') {
         let body = '';
 
@@ -188,7 +215,7 @@ const server = http.createServer((req, res) => {
                         console.log('User found:', user);
                         console.log('Hashed password from DB:', user.Password);
 
-                         // Проверка дали има хеширана парола за този потребител
+                         // check if there is a hash pass for this user
                          if (!user.Password) {
                               res.writeHead(500);
                               res.end('Server error: No password set for user');
@@ -223,21 +250,13 @@ const server = http.createServer((req, res) => {
             }
         });
     } 
-
-    //CHAT GPT CRUD !!!!!!!!!!!!!!!!!!!!
-    // Обработка на обновяване на потребител
-    
-
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    // Несъществуващ път
+    // no path
     else {
         res.writeHead(404);
         res.end('Not Found');
     }
 });
 
-// Стартиране на сървъра
 server.listen(3000, () => {
     console.log('Server listening on port 3000');
 });
